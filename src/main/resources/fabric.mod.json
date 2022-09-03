@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "logcleaner",
+  "version": "${version}",
+
+  "name": "Log Cleaner",
+  "description": "A lightweight mod that cleans old, unused log files",
+  "authors": [
+    "altrisi"
+  ],
+  "contact": {
+    "homepage": "https://github.com/altrisi/LogCleaner",
+    "sources": "https://github.com/altrisi/LogCleaner",
+    "issues": "https://github.com/altrisi/LogCleaner/issues"
+  },
+
+  "entrypoints": {
+    "main": ["altrisi.mods.logcleaner.LogCleaner::run"]
+  },
+
+  "license": "GPL-3.0-only",
+  "icon": "logcleaner-icon.png",
+
+  "depends": {
+    "fabricloader": ">=0.9.0"
+  }
+}
