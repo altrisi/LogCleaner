@@ -25,12 +25,22 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 }
 
+// Imports for JSON minifying
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
 processResources {
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
 	}
+	// Automatically minify fabric.mod.json, pack.mcmeta and mcmod.info (for possible upcoming forge hybrid)
+	doLast {
+        fileTree(dir: outputs.files.asPath, include: ["**/*.json", "**/pack.mcmeta", "**/mcmod.info"]).each {
+            File file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+        }
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -54,6 +64,14 @@ java {
 	// if it is present.
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
+}
+
+compileJava {
+	// Disables generating source file names (they're the same as the class names, so duplicate data) 
+	// and lvt info (the variable names). That makes it so the "helpful NPEs" feature doesn't give variables names,
+	// but (as far as I've checked) no NPE can happen here, and if it does, the line numbers will be more than enough
+	// to find where it occurred.
+	options.compilerArgs << '-g:lines'
 }
 
 // configure the maven publication
