@@ -20,6 +20,12 @@ You can find the mod's configuration file in `config/logcleaner.json`. There's t
 - `daysOld`: The number of days a log has to have been unused in order for it to be deleted. Defaults to `14`
 - `silent`: If set to `true`, Log Cleaner will not send a message with the amount of deleted log files to the log. Defaults to `false`
 
+## Downloads
+
+[<img alt="Download on CurseForge" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@2/assets/cozy/available/curseforge_vector.svg">](https://www.curseforge.com/minecraft/mc-mods/log-cleaner)
+[<img alt="Download on Modrinth" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@2/assets/cozy/available/modrinth_vector.svg">](https://modrinth.com/mod/log-cleaner)
+
+
 ## Setup
 
 For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
