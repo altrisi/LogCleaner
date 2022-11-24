@@ -3,11 +3,7 @@ package altrisi.mods.logcleaner;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
@@ -22,6 +18,9 @@ import com.google.gson.GsonBuilder;
 
 import net.fabricmc.loader.api.FabricLoader;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.max;
+
 public class LogCleaner {
 	static class Config {
 		final int daysOld = 14;
@@ -33,7 +32,7 @@ public class LogCleaner {
 		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		Config config;
-		
+
 		Path configPath = FabricLoader.getInstance().getConfigDir().resolve("logcleaner.json");
 		try (BufferedReader reader = Files.newBufferedReader(configPath)) {
 			config = gson.fromJson(reader, Config.class);
@@ -54,7 +53,7 @@ public class LogCleaner {
 
 		Pattern logNamePattern = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}-\\d\\.log\\.gz$"); // yyyy-MM-dd-i.log.gz (from Minecraft's log4j config)
 
-		Instant maxKept = Instant.now().minus(config.daysOld, ChronoUnit.DAYS);
+		FileTime maxKept = FileTime.from(Instant.now().minus(config.daysOld, ChronoUnit.DAYS));
 
 		int deleted = 0;
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("logs"))) {
@@ -63,11 +62,12 @@ public class LogCleaner {
 				if (logNamePattern.matcher(fileName).matches()) {
 					BasicFileAttributes attributes = Files.readAttributes(logPath, BasicFileAttributes.class);
 
-					Instant accessed = newest(
+					FileTime accessed = max(asList(
 							attributes.lastAccessTime(),
 							attributes.lastModifiedTime(),
 							attributes.creationTime()
-					);
+					));
+
 					if (maxKept.compareTo(accessed) > 0) {
 						// Bye
 						Files.delete(logPath);
@@ -83,15 +83,5 @@ public class LogCleaner {
 			Logger logger = LogManager.getLogger("Log Cleaner"); // if there was an IOE above (shouldn't), this returns the same Logger, not a new one
 			logger.info("Successfully deleted {} old log files", deleted);
 		}
-	}
-	
-	private static Instant newest(FileTime... times) {
-		Instant newest = Instant.EPOCH;
-		for (FileTime time : times) {
-			if (time.toInstant().compareTo(newest) >= 0) {
-				newest = time.toInstant(); // FileTime caches the Instant, so we don't need to
-			}
-		}
-		return newest;
 	}
 }
