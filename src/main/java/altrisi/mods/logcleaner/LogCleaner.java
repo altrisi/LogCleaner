@@ -62,7 +62,6 @@ public class LogCleaner {
 			try{Thread.sleep(4000);}catch(InterruptedException e){}
 		}
 		logger.info("Start of LogCleaner section");
-		Thread.sleep(30000);
 		logger.info("Current time: " + new Date());
 		int deleted = 0;
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("logs"))) {
