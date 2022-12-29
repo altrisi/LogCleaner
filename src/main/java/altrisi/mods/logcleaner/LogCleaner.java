@@ -8,6 +8,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
@@ -55,12 +56,29 @@ public class LogCleaner {
 
 		FileTime maxKept = FileTime.from(Instant.now().minus(config.daysOld, ChronoUnit.DAYS));
 
+		Logger logger = LogManager.getLogger("Log Cleaner");
+		logger.info("Start of LogCleaner section");
+		logger.info("Current time: " + new Date());
 		int deleted = 0;
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("logs"))) {
 			for (Path logPath : stream) {
 				String fileName = logPath.getFileName().toString();
 				if (logNamePattern.matcher(fileName).matches()) {
+					logger.info("Log: " + fileName);
 					BasicFileAttributes attributes = Files.readAttributes(logPath, BasicFileAttributes.class);
+					logger.info("Attributes pre-read: " + stringify(attributes));
+					logger.info("Attributes post-read: " + stringify(Files.readAttributes(logPath, BasicFileAttributes.class)));
+					// save
+					Files.setAttribute(logPath, "lastAccessTime", attributes.lastAccessTime());
+					logger.info("Attributes post-trying to keep: " + stringify(Files.readAttributes(logPath, BasicFileAttributes.class)));
+					Files.setAttribute(logPath, "lastAccessTime", attributes.lastAccessTime()); // need to do it again cause we read it for logging
+					// check it also when closing
+					Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+						try {
+							logger.info("Attributes of " + fileName + " when leaving " + stringify(Files.readAttributes(logPath, BasicFileAttributes.class)));
+							Files.setAttribute(logPath, "lastAccessTime", attributes.lastAccessTime()); // need to do it again cause we read it for logging
+						} catch (IOException e) {}
+					}));
 
 					FileTime accessed = max(asList(
 							attributes.lastAccessTime(),
@@ -70,18 +88,22 @@ public class LogCleaner {
 
 					if (maxKept.compareTo(accessed) > 0) {
 						// Bye
-						Files.delete(logPath);
+						//Files.delete(logPath);
 						deleted++;
 					}
 				}
 			}
 		} catch (IOException e) {
-			Logger logger = LogManager.getLogger("Log Cleaner");
+			//Logger logger = LogManager.getLogger("Log Cleaner");
 			logger.error("Exception while trying to clean log files", e);
 		}
 		if (deleted > 0 && !config.silent) {
-			Logger logger = LogManager.getLogger("Log Cleaner"); // if there was an IOE above (shouldn't), this returns the same Logger, not a new one
-			logger.info("Successfully deleted {} old log files", deleted);
+			//Logger logger = LogManager.getLogger("Log Cleaner"); // if there was an IOE above (shouldn't), this returns the same Logger, not a new one
+			//logger.info("Successfully deleted {} old log files", deleted);
 		}
+		logger.info("End of LogCleaner section");
+	}
+	private static String stringify(BasicFileAttributes attributes) {
+		return "[lastAccess=" + Date.from(attributes.lastAccessTime().toInstant()) + ", lastMod="+Date.from(attributes.lastModifiedTime().toInstant())+"]";
 	}
 }
