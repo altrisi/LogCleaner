@@ -26,3 +26,7 @@ jobs:
       with:
         name: Compiled artifacts for ${{ github.sha }}
         path: build/libs
+    - name: Run with Gradle AGAIN
+      run: ./gradlew runServer
+    - name: Run with Gradle AND AGAIN
+      run: ./gradlew runServer
