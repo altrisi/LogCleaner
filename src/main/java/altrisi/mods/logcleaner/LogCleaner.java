@@ -57,7 +57,12 @@ public class LogCleaner {
 		FileTime maxKept = FileTime.from(Instant.now().minus(config.daysOld, ChronoUnit.DAYS));
 
 		Logger logger = LogManager.getLogger("Log Cleaner");
+		for (int i = 0; i < 100; i+=4) {
+			logger.info("Starting in " + (100 - i) + " seconds...");
+			try{Thread.sleep(4000);}catch(InterruptedException e){}
+		}
 		logger.info("Start of LogCleaner section");
+		Thread.sleep(30000);
 		logger.info("Current time: " + new Date());
 		int deleted = 0;
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("logs"))) {
