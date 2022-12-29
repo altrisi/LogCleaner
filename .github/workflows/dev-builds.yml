@@ -20,8 +20,8 @@ jobs:
         cache: 'gradle'
     - name: Grant execute permission to gradlew
       run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build runServer
+    - name: Run with Gradle
+      run: ./gradlew runServer
     - uses: actions/upload-artifact@v3
       with:
         name: Compiled artifacts for ${{ github.sha }}
