@@ -106,7 +106,6 @@ public class LogCleaner {
 			//logger.info("Successfully deleted {} old log files", deleted);
 		}
 		logger.info("End of LogCleaner section");
-		System.exit(0);
 	}
 	private static String stringify(BasicFileAttributes attributes) {
 		return "[lastAccess=" + Date.from(attributes.lastAccessTime().toInstant()) + ", lastMod="+Date.from(attributes.lastModifiedTime().toInstant())+"]";
