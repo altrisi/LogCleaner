@@ -21,8 +21,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import static java.util.Arrays.asList;
 import static java.util.Collections.max;
 
-@cpw.mods.fml.common.Mod(modid = "logcleaner")
-@net.minecraftforge.fml.common.Mod(value = "logcleaner", modid = "logcleaner")
+@cpw.mods.fml.common.Mod(modid = "logcleaner", acceptableRemoteVersions = "*")
+@net.minecraftforge.fml.common.Mod(value = "logcleaner", modid = "logcleaner", acceptableRemoteVersions = "*")
 public class LogCleaner {
 	static class Config {
 		final int daysOld = 14;

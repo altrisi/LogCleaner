@@ -15,4 +15,5 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface Mod {
 	String modid();
+	String acceptableRemoteVersions();
 }

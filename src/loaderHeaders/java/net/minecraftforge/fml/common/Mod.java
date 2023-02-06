@@ -24,4 +24,9 @@ public @interface Mod {
 	 * @until 1.13 probably
 	 */
 	String modid();
+	
+	/**
+	 * @until 1.13 probably
+	 */
+	String acceptableRemoteVersions();
 }
