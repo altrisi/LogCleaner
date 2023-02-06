@@ -1,0 +1,8 @@
+modLoader="javafml"
+loaderVersion="[25,)"
+license="GPL v3"
+[[mods]]
+modId="logcleaner"
+version="${version}"
+displayName="Log Cleaner"
+logoFile="logcleaner-icon.png"

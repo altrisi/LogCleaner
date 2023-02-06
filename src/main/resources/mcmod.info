@@ -1,0 +1,7 @@
+[{
+  "modid": "logcleaner",
+  "name": "Log Cleaner",
+  "version": "${version}",
+  "logoFile": "logcleaner-icon.png",
+  "authorList": ["altrisi"]
+}]
