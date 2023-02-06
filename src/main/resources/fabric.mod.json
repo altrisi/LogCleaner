@@ -15,7 +15,7 @@
   },
 
   "entrypoints": {
-    "main": ["altrisi.mods.logcleaner.LogCleaner::run"]
+    "main": ["altrisi.mods.logcleaner.LogCleaner::runF"]
   },
 
   "license": "GPL-3.0-only",
