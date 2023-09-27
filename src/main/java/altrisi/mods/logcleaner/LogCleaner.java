@@ -21,6 +21,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import static java.util.Arrays.asList;
 import static java.util.Collections.max;
 
+@cpw.mods.fml.common.Mod(modid = "logcleaner", acceptableRemoteVersions = "*")
+@net.minecraftforge.fml.common.Mod(value = "logcleaner", modid = "logcleaner", acceptableRemoteVersions = "*")
 public class LogCleaner {
 	static class Config {
 		final int daysOld = 14;
@@ -28,12 +30,28 @@ public class LogCleaner {
 		//final Set<String> filtered = Collections.emptySet(); //TBD
 	}
 	
-	public static void run() {
+	/**
+	 * Fabric entrypoint, preferred one. Respects the loader's config path even if changed
+	 */
+	public static void runF() {
+		run(FabricLoader.getInstance().getConfigDir());
+	}
+
+	/**
+	 * Entrypoint for these loaders that for some reason like to construct an instance for nothing
+	 * For example forge. At least it doesn't need us to extend something
+	 */
+	public LogCleaner() {
+		//System.out.println("Running under what seems to be Forge");
+		run(Paths.get("config/"));
+	}
+
+	private static void run(Path configFolder) {
+		Path configPath = configFolder.resolve("logcleaner.json");
 		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		Config config;
 
-		Path configPath = FabricLoader.getInstance().getConfigDir().resolve("logcleaner.json");
 		try (BufferedReader reader = Files.newBufferedReader(configPath)) {
 			config = gson.fromJson(reader, Config.class);
 			if (config == null) config = new Config(); // Empty files will do this

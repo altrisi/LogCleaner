@@ -32,10 +32,10 @@ import groovy.json.JsonSlurper
 processResources {
 	inputs.property "version", project.version
 
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+	filesMatching(["fabric.mod.json", "mcmod.info", "META-INF/mods.toml"]) {
+		expand "version": project.version, "desc": project.mod_desc
 	}
-	// Automatically minify fabric.mod.json, pack.mcmeta and mcmod.info (for possible upcoming forge hybrid)
+	// Automatically minify fabric.mod.json, pack.mcmeta and mcmod.info
 	doLast {
         fileTree(dir: outputs.files.asPath, include: ["**/*.json", "**/pack.mcmeta", "**/mcmod.info"]).each {
             File file -> file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
@@ -43,16 +43,18 @@ processResources {
     }
 }
 
+sourceSets {
+	loaderHeaders {
+		
+	}
+	main {
+		compileClasspath += loaderHeaders.output
+	}
+}
+
 tasks.withType(JavaCompile).configureEach {
-	// ensure that the encoding is set to UTF-8, no matter what the system default is
-	// this fixes some edge cases with special characters not displaying correctly
-	// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-	// If Javadoc is generated, this must be specified in that task too.
 	it.options.encoding = "UTF-8"
 
-	// The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
-	// JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
-	// We'll use that if it's available, but otherwise we'll use the older option.
 	def targetVersion = 8
 	if (JavaVersion.current().isJava9Compatible()) {
 		 it.options.release = targetVersion
@@ -60,10 +62,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
+	//withSourcesJar()
 }
 
 compileJava {
@@ -84,9 +83,6 @@ publishing {
 
 	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
+		// Publishing repos
 	}
 }

@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Log Cleaner",
-  "description": "A lightweight mod that cleans old, unused log files",
+  "description": "${desc}",
   "authors": [
     "altrisi"
   ],
@@ -15,7 +15,7 @@
   },
 
   "entrypoints": {
-    "main": ["altrisi.mods.logcleaner.LogCleaner::run"]
+    "main": ["altrisi.mods.logcleaner.LogCleaner::runF"]
   },
 
   "license": "GPL-3.0-only",
