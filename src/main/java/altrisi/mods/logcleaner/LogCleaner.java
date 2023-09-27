@@ -34,7 +34,7 @@ public class LogCleaner {
 	 * Fabric entrypoint, preferred one. Respects the loader's config path even if changed
 	 */
 	public static void runF() {
-		run(FabricLoader.getInstance().getConfigDir().resolve("logcleaner.json"));
+		run(FabricLoader.getInstance().getConfigDir());
 	}
 
 	/**
@@ -42,10 +42,12 @@ public class LogCleaner {
 	 * For example forge. At least it doesn't need us to extend something
 	 */
 	public LogCleaner() {
+		//System.out.println("Running under what seems to be Forge");
 		run(Paths.get("config/"));
 	}
 
-	private static void run(Path configPath) {
+	private static void run(Path configFolder) {
+		Path configPath = configFolder.resolve("logcleaner.json");
 		final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		Config config;
