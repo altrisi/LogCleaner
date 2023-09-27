@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Log Cleaner",
-  "description": "A lightweight mod that cleans old, unused log files",
+  "description": "${desc}",
   "authors": [
     "altrisi"
   ],
